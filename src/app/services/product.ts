@@ -20,6 +20,27 @@ export class ProductService {
 
   // Método para añadir (luego lo conectaremos al formulario)
   addProduct(product: Product) {
-    this.productsList.update(prods => [...prods, product]);
+    const newProduct = { ...product, id: this.generateId() };
+    this.productsList.update(prods => [...prods, newProduct]);
+  }
+
+  // Método para actualizar un producto existente
+  updateProduct(id: number, updatedProduct: Partial<Product>) {
+    this.productsList.update(prods =>
+      prods.map(prod => 
+        prod.id === id ? { ...prod, ...updatedProduct } : prod
+      )
+    );
+  }
+
+  // Método para eliminar un producto
+  deleteProduct(id: number) {
+    this.productsList.update(prods => prods.filter(prod => prod.id !== id));
+  }
+
+  // Método auxiliar para generar IDs únicos
+  private generateId(): number {
+    const maxId = Math.max(...this.productsList().map(p => p.id), 0);
+    return maxId + 1;
   }
 }
