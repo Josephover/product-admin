@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialog } from '@angular/material/dialog';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProductService } from '../../services/product';
 import { NotificationService } from '../../services/notification.service';
 import { ProductFormComponent } from '../../components/product/product';
@@ -19,13 +20,15 @@ import { ProductFormComponent } from '../../components/product/product';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     MatTableModule,
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
     MatSelectModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    NgbModule
   ],
   templateUrl: './products.html',
   styleUrl: './products.scss'
@@ -34,6 +37,9 @@ export class Products implements OnInit {
   private productService = inject(ProductService);
   private dialog = inject(MatDialog);
   private notify = inject(NotificationService);
+  
+  // Exponer Math al template
+  readonly Math = Math;
   
   products = this.productService.getProducts();
   loading = this.productService.isLoading();
@@ -45,10 +51,17 @@ export class Products implements OnInit {
   categoryControl = new FormControl<string | null>(null);
   categories = signal<string[]>([]);
   filteredProducts = signal<any[]>([]);
+  pagedProducts = signal<any[]>([]);
+  
+  // Paginación avanzada
+  pageSize = 10;
+  currentPage = 1;
+  totalItems = 0;
   
   // Effect para actualizar productos filtrados cuando cambian
   private updateEffect = effect(() => {
     const _ = this.products();
+    this.currentPage = 1; // Reset a primera página
     this.updateFilteredProducts();
   });
 
@@ -77,13 +90,35 @@ export class Products implements OnInit {
     });
   }
 
-  // Actualizar productos filtrados
+  // Actualizar productos filtrados y aplicar paginación
   updateFilteredProducts(): void {
     const search = this.searchControl.value || '';
     const category = this.categoryControl.value;
-    this.filteredProducts.set(
-      this.productService.searchAndFilter(search, category)
-    );
+    const filtered = this.productService.searchAndFilter(search, category);
+    this.filteredProducts.set(filtered);
+    this.totalItems = filtered.length;
+    this.updatePagedProducts();
+  }
+  
+  // Aplicar paginación a los productos filtrados
+  updatePagedProducts(): void {
+    const filtered = this.filteredProducts();
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    this.pagedProducts.set(filtered.slice(start, end));
+  }
+  
+  // Manejar cambios de página
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.updatePagedProducts();
+  }
+  
+  // Cambiar tamaño de página
+  onPageSizeChange(size: number): void {
+    this.pageSize = size;
+    this.currentPage = 1; // Reset a primera página
+    this.updatePagedProducts();
   }
 
   // Limpiar filtros

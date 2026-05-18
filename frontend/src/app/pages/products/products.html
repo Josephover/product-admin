@@ -45,7 +45,7 @@
 </div>
 
 <!-- Tabla de productos -->
-<table mat-table [dataSource]="filteredProducts()" class="mat-elevation-z8">
+<table mat-table [dataSource]="pagedProducts()" class="mat-elevation-z8">
 
   <!-- Columna ID -->
   <ng-container matColumnDef="id">
@@ -95,3 +95,48 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let product; columns: displayedColumns;"></tr>
 </table>
+
+<!-- Controles de Paginación Avanzada -->
+<div class="pagination-controls" *ngIf="filteredProducts().length > 0">
+  <!-- Fila superior: Info y Selector de items -->
+  <div class="pagination-top">
+    <div class="pagination-info">
+      Mostrando <strong>{{(currentPage - 1) * pageSize + 1}}</strong> a <strong>{{Math.min(currentPage * pageSize, totalItems)}}</strong> de <strong>{{totalItems}}</strong> productos
+    </div>
+
+    <!-- Selector de items por página -->
+    <div class="items-per-page">
+      <label for="pageSize">Items por página:</label>
+      <mat-form-field appearance="outline" class="page-size-field">
+        <mat-select 
+          id="pageSize"
+          [ngModel]="pageSize"
+          (ngModelChange)="onPageSizeChange($event)">
+          <mat-option [value]="5">5</mat-option>
+          <mat-option [value]="10">10</mat-option>
+          <mat-option [value]="25">25</mat-option>
+          <mat-option [value]="50">50</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Fila inferior: Paginador -->
+  <div class="pagination-bottom">
+    <nav aria-label="Paginación de productos">
+      <ngb-pagination 
+        [collectionSize]="totalItems"
+        [(page)]="currentPage"
+        [pageSize]="pageSize"
+        (pageChange)="onPageChange(currentPage)"
+        [maxSize]="5"
+        [boundaryLinks]="true"
+        [directionLinks]="true"
+        previousLabel="← Anterior"
+        nextLabel="Siguiente →"
+        firstLabel="Inicio"
+        lastLabel="Final">
+      </ngb-pagination>
+    </nav>
+  </div>
+</div>
