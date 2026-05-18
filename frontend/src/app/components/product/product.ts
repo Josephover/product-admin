@@ -30,10 +30,12 @@ export class ProductFormComponent implements AfterViewInit {
     // Crear el formulario en el constructor con valores por defecto
     this.productForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
+      description: [''],
       category: ['', Validators.required],
       price: [0, [Validators.required, Validators.min(1)]],
-      stock: [0, [Validators.required, Validators.min(0)]],
-      description: ['']
+      stockQuantity: [0, [Validators.required, Validators.min(0)]],
+      imageUrl: [''],
+      isActive: [true]
     });
   }
 
@@ -44,10 +46,12 @@ export class ProductFormComponent implements AfterViewInit {
         console.log('Datos a precargar:', this.dialogData);
         this.productForm.patchValue({
           name: this.dialogData.name || '',
+          description: this.dialogData.description || '',
           category: this.dialogData.category || '',
           price: this.dialogData.price || 0,
-          stock: this.dialogData.stock || 0,
-          description: this.dialogData.description || ''
+          stockQuantity: this.dialogData.stockQuantity || this.dialogData.stock || 0,
+          imageUrl: this.dialogData.imageUrl || '',
+          isActive: this.dialogData.isActive !== undefined ? this.dialogData.isActive : true
         });
         console.log('Formulario actualizado:', this.productForm.value);
       }

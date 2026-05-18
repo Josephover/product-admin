@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,12 +15,19 @@ import { ProductFormComponent } from '../../components/product/product';
   templateUrl: './products.html',
   styleUrl: './products.scss'
 })
-export class Products {
+export class Products implements OnInit {
   private productService = inject(ProductService);
   private dialog = inject(MatDialog);
   
   products = this.productService.getProducts();
-  displayedColumns: string[] = ['id', 'name', 'category', 'price', 'stock', 'actions'];
+  loading = this.productService.isLoading();
+  error = this.productService.getError();
+  displayedColumns: string[] = ['id', 'name', 'category', 'price', 'stockQuantity', 'actions'];
+
+  ngOnInit() {
+    // Recargar productos al inicializar
+    this.productService.loadProducts();
+  }
 
   // Abrir diálogo para crear nuevo producto
   openProductForm(): void {
@@ -32,33 +39,34 @@ export class Products {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.productService.addProduct(result);
-        // Recargar productos
-        this.products = this.productService.getProducts();
+        // Recargar productos después de crear
+        setTimeout(() => this.productService.loadProducts(), 500);
       }
     });
   }
 
   // Editar producto existente
   editProduct(product: any): void {
-    console.log('Abriendo diálogo de edición con producto:', product);
-    
     const dialogRef = this.dialog.open(ProductFormComponent, {
       width: '500px',
       data: product
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('Diálogo cerrado con resultado:', result);
       if (result) {
         this.productService.updateProduct(product.id, result);
-        this.products = this.productService.getProducts();
+        // Recargar productos después de actualizar
+        setTimeout(() => this.productService.loadProducts(), 500);
       }
     });
   }
 
   // Eliminar producto
   deleteProduct(id: number): void {
-    this.productService.deleteProduct(id);
-    this.products = this.productService.getProducts();
+    if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+      this.productService.deleteProduct(id);
+      // Recargar productos después de eliminar
+      setTimeout(() => this.productService.loadProducts(), 500);
+    }
   }
 }
