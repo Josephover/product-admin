@@ -119,4 +119,20 @@ export class ProductService {
   deactivateProduct(id: number) {
     return this.http.patch(`${this.apiUrl}/${id}/deactivate`, {});
   }
+
+  // Método para obtener todas las categorías
+  getCategories() {
+    return this.http.get<string[]>(`${this.apiUrl}/categories`);
+  }
+
+  // Método para buscar y filtrar productos (busca en la lista actual)
+  searchAndFilter(searchTerm: string, category: string | null = null) {
+    let filtered = this.productsList().filter(product => {
+      const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           product.description?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = !category || product.category === category;
+      return matchesSearch && matchesCategory;
+    });
+    return filtered;
+  }
 }

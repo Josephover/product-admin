@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -64,5 +65,15 @@ public class ProductService {
             product.setUpdatedAt(System.currentTimeMillis());
             productRepository.save(product);
         });
+    }
+    
+    public List<String> getAllCategories() {
+        return productRepository.findAll()
+                .stream()
+                .map(Product::getCategory)
+                .filter(category -> category != null && !category.isEmpty())
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
     }
 }

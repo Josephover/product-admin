@@ -5,6 +5,28 @@
   margin-bottom: 20px;
 }
 
+// Contenedor de búsqueda y filtros
+.search-filter-container {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+
+  .search-field {
+    flex: 1;
+    min-width: 250px;
+  }
+
+  .category-field {
+    min-width: 200px;
+  }
+
+  button {
+    height: 56px;
+  }
+}
+
 table {
   width: 100%;
 }

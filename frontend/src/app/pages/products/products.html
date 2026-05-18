@@ -5,7 +5,47 @@
   </button>
 </div>
 
-<table mat-table [dataSource]="products()" class="mat-elevation-z8">
+<!-- Buscador y Filtros -->
+<div class="search-filter-container">
+  <!-- Búsqueda por nombre -->
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Buscar por nombre</mat-label>
+    <input 
+      matInput 
+      [formControl]="searchControl"
+      placeholder="Escribe el nombre del producto">
+    <button 
+      mat-icon-button 
+      matSuffix 
+      *ngIf="searchControl.value"
+      (click)="searchControl.reset('')"
+      aria-label="Limpiar búsqueda">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <!-- Filtro por categoría -->
+  <mat-form-field appearance="outline" class="category-field">
+    <mat-label>Categoría</mat-label>
+    <mat-select [formControl]="categoryControl">
+      <mat-option [value]="null">Todas las categorías</mat-option>
+      <mat-option *ngFor="let category of categories()" [value]="category">
+        {{category}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Botón para limpiar filtros -->
+  <button 
+    mat-stroked-button 
+    (click)="clearFilters()"
+    *ngIf="hasActiveFilters()">
+    <mat-icon>clear_all</mat-icon> Limpiar Filtros
+  </button>
+</div>
+
+<!-- Tabla de productos -->
+<table mat-table [dataSource]="filteredProducts()" class="mat-elevation-z8">
 
   <!-- Columna ID -->
   <ng-container matColumnDef="id">
