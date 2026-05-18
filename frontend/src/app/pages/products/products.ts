@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { ProductService } from '../../services/product';
+import { NotificationService } from '../../services/notification.service';
 import { ProductFormComponent } from '../../components/product/product';
 
 @Component({
@@ -18,6 +19,7 @@ import { ProductFormComponent } from '../../components/product/product';
 export class Products implements OnInit {
   private productService = inject(ProductService);
   private dialog = inject(MatDialog);
+  private notify = inject(NotificationService);
   
   products = this.productService.getProducts();
   loading = this.productService.isLoading();

@@ -1,12 +1,14 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Product } from '../models/product.model';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
   private http = inject(HttpClient);
+  private notify = inject(NotificationService);
   private apiUrl = 'http://localhost:8080/api/products';
   
   // Usaremos Signals (lo más nuevo de Angular) para el estado
@@ -61,9 +63,11 @@ export class ProductService {
     this.http.post<Product>(this.apiUrl, product).subscribe({
       next: (newProduct) => {
         this.productsList.update(prods => [...prods, newProduct]);
+        this.notify.success(`✅ Producto "${newProduct.name}" creado correctamente`);
       },
       error: (err) => {
         this.error.set('Error al crear producto');
+        this.notify.error('❌ Error al crear el producto. Intenta de nuevo.');
         console.error('Error:', err);
       }
     });
@@ -76,9 +80,11 @@ export class ProductService {
         this.productsList.update(prods =>
           prods.map(prod => prod.id === id ? product : prod)
         );
+        this.notify.success(`✅ Producto "${product.name}" actualizado correctamente`);
       },
       error: (err) => {
         this.error.set('Error al actualizar producto');
+        this.notify.error('❌ Error al actualizar el producto. Intenta de nuevo.');
         console.error('Error:', err);
       }
     });
@@ -89,9 +95,11 @@ export class ProductService {
     this.http.delete(`${this.apiUrl}/${id}`).subscribe({
       next: () => {
         this.productsList.update(prods => prods.filter(prod => prod.id !== id));
+        this.notify.success('✅ Producto eliminado correctamente');
       },
       error: (err) => {
         this.error.set('Error al eliminar producto');
+        this.notify.error('❌ Error al eliminar el producto. Intenta de nuevo.');
         console.error('Error:', err);
       }
     });

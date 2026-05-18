@@ -37,3 +37,51 @@ body {
   height: 100%;
 }
 /* You can add global styles to this file, and also import other style files */
+
+// ========================
+// Estilos para Notificaciones (Snackbar)
+// ========================
+
+// Éxito
+.snackbar-success {
+  background-color: #4caf50 !important;
+  color: white !important;
+  font-weight: 500;
+
+  .mdc-button__label {
+    color: white !important;
+  }
+}
+
+// Error
+.snackbar-error {
+  background-color: #f44336 !important;
+  color: white !important;
+  font-weight: 500;
+
+  .mdc-button__label {
+    color: white !important;
+  }
+}
+
+// Advertencia
+.snackbar-warning {
+  background-color: #ff9800 !important;
+  color: white !important;
+  font-weight: 500;
+
+  .mdc-button__label {
+    color: white !important;
+  }
+}
+
+// Información
+.snackbar-info {
+  background-color: #2196f3 !important;
+  color: white !important;
+  font-weight: 500;
+
+  .mdc-button__label {
+    color: white !important;
+  }
+}
