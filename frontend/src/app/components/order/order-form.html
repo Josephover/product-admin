@@ -1,0 +1,80 @@
+<div mat-dialog-content>
+  <form [formGroup]="orderForm" *ngIf="orderForm">
+    
+    <div class="form-columns">
+      <!-- COLUMNA IZQUIERDA -->
+      <div class="form-column">
+        <!-- Campo Nombre del Cliente -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Nombre del Cliente *</mat-label>
+          <input matInput formControlName="customerName" placeholder="Ej: Juan García">
+          <mat-error *ngIf="hasError('customerName')">
+            El nombre es requerido (mínimo 3 caracteres)
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Campo Email -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Email del Cliente *</mat-label>
+          <input matInput type="email" formControlName="customerEmail" placeholder="correo@ejemplo.com">
+          <mat-error *ngIf="hasError('customerEmail')">
+            Email válido requerido
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Campo Teléfono -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Teléfono</mat-label>
+          <input matInput formControlName="customerPhone" placeholder="Ej: +34 123 456 789">
+        </mat-form-field>
+
+        <!-- Campo Dirección -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Dirección de Envío *</mat-label>
+          <textarea matInput formControlName="shippingAddress" rows="3" 
+                    placeholder="Calle, número, ciudad, código postal..."></textarea>
+          <mat-error *ngIf="hasError('shippingAddress')">
+            La dirección es requerida
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- COLUMNA DERECHA -->
+      <div class="form-column">
+        <!-- Campo Monto Total -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Monto Total *</mat-label>
+          <input matInput type="number" formControlName="totalAmount" placeholder="0.00" step="0.01">
+          <mat-error *ngIf="hasError('totalAmount')">
+            Monto válido requerido
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Campo Estado -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="status">
+            <mat-option *ngFor="let status of orderStatuses" [value]="status">
+              {{ statusNames[status] }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Campo Notas -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Notas</mat-label>
+          <textarea matInput formControlName="notes" rows="3" 
+                    placeholder="Notas adicionales sobre la orden..."></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="!orderForm.valid">
+    {{ isEdit ? 'Actualizar' : 'Crear Orden' }}
+  </button>
+</div>

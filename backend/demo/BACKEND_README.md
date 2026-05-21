@@ -40,6 +40,7 @@ spring.datasource.password=TU_CONTRASEÑA
 
 ```bash
 # Compilar y ejecutar
+cd backend/demo
 ./gradlew bootRun
 
 # O en Windows
