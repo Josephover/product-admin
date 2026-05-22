@@ -66,11 +66,15 @@ export class OrderService {
       next: (newOrder) => {
         this.ordersList.update(orders => [newOrder, ...orders]);
         this.filteredOrders.update(orders => [newOrder, ...orders]);
-        this.notificationService.success('Orden creada exitosamente');
+        if (newOrder?.orderNumber) {
+          this.notificationService.orderCreated(newOrder.orderNumber);
+        } else {
+          this.notificationService.success('✅ Orden creada exitosamente');
+        }
         this.loading.set(false);
       },
       error: (err) => {
-        this.notificationService.error('Error al crear la orden');
+        this.notificationService.operationFailed('crear la orden');
         this.loading.set(false);
       }
     });
@@ -86,11 +90,15 @@ export class OrderService {
         this.filteredOrders.update(orders =>
           orders.map(o => o.id === id ? updatedOrder : o)
         );
-        this.notificationService.success('Orden actualizada exitosamente');
+        if (updatedOrder?.orderNumber) {
+          this.notificationService.orderUpdated(updatedOrder.orderNumber);
+        } else {
+          this.notificationService.success('✏️ Orden actualizada correctamente');
+        }
         this.loading.set(false);
       },
       error: (err) => {
-        this.notificationService.error('Error al actualizar la orden');
+        this.notificationService.operationFailed('actualizar la orden');
         this.loading.set(false);
       }
     });
@@ -106,11 +114,13 @@ export class OrderService {
         this.filteredOrders.update(orders =>
           orders.map(o => o.id === id ? updatedOrder : o)
         );
-        this.notificationService.success('Estado de orden actualizado');
+        if (updatedOrder?.orderNumber) {
+          this.notificationService.statusChanged(updatedOrder.orderNumber, this.getStatusDisplayName(status));
+        }
         this.loading.set(false);
       },
       error: (err) => {
-        this.notificationService.error('Error al actualizar el estado');
+        this.notificationService.operationFailed('actualizar el estado');
         this.loading.set(false);
       }
     });
@@ -118,15 +128,21 @@ export class OrderService {
 
   deleteOrder(id: number) {
     this.loading.set(true);
+    // Obtener el número de orden antes de eliminar
+    const orderToDelete = this.ordersList().find(o => o.id === id);
     this.http.delete(`${this.apiUrl}/${id}`).subscribe({
       next: () => {
         this.ordersList.update(orders => orders.filter(o => o.id !== id));
         this.filteredOrders.update(orders => orders.filter(o => o.id !== id));
-        this.notificationService.success('Orden eliminada exitosamente');
+        if (orderToDelete?.orderNumber) {
+          this.notificationService.orderDeleted(orderToDelete.orderNumber);
+        } else {
+          this.notificationService.success('✅ Orden eliminada exitosamente');
+        }
         this.loading.set(false);
       },
       error: (err) => {
-        this.notificationService.error('Error al eliminar la orden');
+        this.notificationService.operationFailed('eliminar la orden');
         this.loading.set(false);
       }
     });
@@ -144,6 +160,40 @@ export class OrderService {
         const matchesStatus = !status || order.status === status;
         
         return matchesSearch && matchesStatus;
+      })
+    );
+  }
+
+  advancedSearch(
+    searchTerm: string,
+    status: string,
+    orderNumber: string,
+    minAmount: number | null,
+    maxAmount: number | null
+  ) {
+    const orders = this.ordersList();
+    
+    this.filteredOrders.set(
+      orders.filter(order => {
+        // Búsqueda por texto
+        const matchesSearch = !searchTerm ||
+          order.orderNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          order.customerEmail.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        // Filtro por estado
+        const matchesStatus = !status || order.status === status;
+        
+        // Filtro por número de orden
+        const matchesOrderNumber = !orderNumber ||
+          order.orderNumber?.toLowerCase().includes(orderNumber.toLowerCase());
+        
+        // Filtro por monto (rango)
+        let matchesAmount = true;
+        if (minAmount !== null && order.totalAmount < minAmount) matchesAmount = false;
+        if (maxAmount !== null && order.totalAmount > maxAmount) matchesAmount = false;
+        
+        return matchesSearch && matchesStatus && matchesOrderNumber && matchesAmount;
       })
     );
   }

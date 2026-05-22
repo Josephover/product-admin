@@ -42,46 +42,110 @@ body {
 // Estilos para Notificaciones (Snackbar)
 // ========================
 
-// Éxito
+// Estilos base para todos los snackbars
+::ng-deep .mdc-snackbar {
+  .mdc-snackbar__surface {
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    min-height: 56px;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .mdc-snackbar__label {
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+
+  .mdc-button__label {
+    font-weight: 600;
+    font-size: 12px;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(500px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// Éxito - Verde vibrante
 .snackbar-success {
-  background-color: #4caf50 !important;
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%) !important;
   color: white !important;
   font-weight: 500;
+
+  .mdc-snackbar__surface {
+    border-left: 4px solid #2e7d32 !important;
+  }
 
   .mdc-button__label {
     color: white !important;
   }
+
+  .mdc-button:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
 }
 
-// Error
+// Error - Rojo vibrante
 .snackbar-error {
-  background-color: #f44336 !important;
+  background: linear-gradient(135deg, #f44336 0%, #e53935 100%) !important;
   color: white !important;
   font-weight: 500;
+
+  .mdc-snackbar__surface {
+    border-left: 4px solid #c62828 !important;
+  }
 
   .mdc-button__label {
     color: white !important;
   }
+
+  .mdc-button:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
 }
 
-// Advertencia
+// Advertencia - Naranja vibrante
 .snackbar-warning {
-  background-color: #ff9800 !important;
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%) !important;
   color: white !important;
   font-weight: 500;
+
+  .mdc-snackbar__surface {
+    border-left: 4px solid #e65100 !important;
+  }
 
   .mdc-button__label {
     color: white !important;
   }
+
+  .mdc-button:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
 }
 
-// Información
+// Información - Azul vibrante
 .snackbar-info {
-  background-color: #2196f3 !important;
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%) !important;
   color: white !important;
   font-weight: 500;
 
+  .mdc-snackbar__surface {
+    border-left: 4px solid #1565c0 !important;
+  }
+
   .mdc-button__label {
     color: white !important;
+  }
+
+  .mdc-button:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
   }
 }

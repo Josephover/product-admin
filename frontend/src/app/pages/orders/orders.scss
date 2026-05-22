@@ -27,6 +27,37 @@
   }
 }
 
+// Filtros Avanzados (Compactos)
+.advanced-filters-container {
+  background: #f9f9f9;
+  padding: 12px 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border-left: 3px solid #667eea;
+
+  .compact-filters {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+
+    .filter-field {
+      flex: 0 1 auto;
+      min-width: 140px;
+    }
+
+    .clear-btn {
+      margin-bottom: 0;
+      color: #ff9800;
+
+      &:hover {
+        color: #f57c00;
+        background-color: rgba(255, 152, 0, 0.1);
+      }
+    }
+  }
+}
+
 table {
   width: 100%;
 }

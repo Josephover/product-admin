@@ -37,6 +37,9 @@ import { Order, OrderStatus } from '../../models/order.model';
 export class Orders implements OnInit {
   searchControl = new FormControl('');
   statusControl = new FormControl('');
+  orderNumberControl = new FormControl('');
+  minAmountControl = new FormControl('');
+  maxAmountControl = new FormControl('');
 
   // Expose OrderStatus to template
   OrderStatus = OrderStatus;
@@ -110,6 +113,23 @@ export class Orders implements OnInit {
       this.currentPage.set(1);
       this.updateFilteredOrders();
     });
+
+    // Listen to order number changes
+    this.orderNumberControl.valueChanges.subscribe(() => {
+      this.currentPage.set(1);
+      this.updateFilteredOrders();
+    });
+
+    // Listen to amount changes
+    this.minAmountControl.valueChanges.subscribe(() => {
+      this.currentPage.set(1);
+      this.updateFilteredOrders();
+    });
+
+    this.maxAmountControl.valueChanges.subscribe(() => {
+      this.currentPage.set(1);
+      this.updateFilteredOrders();
+    });
   }
 
   loadStatuses() {
@@ -123,7 +143,11 @@ export class Orders implements OnInit {
   updateFilteredOrders() {
     const searchTerm = this.searchControl.value || '';
     const status = this.statusControl.value || '';
-    this.orderService.searchAndFilter(searchTerm, status);
+    const orderNumber = this.orderNumberControl.value || '';
+    const minAmount = this.minAmountControl.value ? parseFloat(this.minAmountControl.value) : null;
+    const maxAmount = this.maxAmountControl.value ? parseFloat(this.maxAmountControl.value) : null;
+    
+    this.orderService.advancedSearch(searchTerm, status, orderNumber, minAmount, maxAmount);
     this.updatePagedOrders();
   }
 
@@ -150,6 +174,9 @@ export class Orders implements OnInit {
   clearFilters() {
     this.searchControl.setValue('');
     this.statusControl.setValue('');
+    this.orderNumberControl.setValue('');
+    this.minAmountControl.setValue('');
+    this.maxAmountControl.setValue('');
   }
 
   openOrderForm() {
