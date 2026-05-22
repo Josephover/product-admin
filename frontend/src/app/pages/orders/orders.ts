@@ -12,6 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { OrderService } from '../../services/order';
 import { NotificationService } from '../../services/notification.service';
+import { ExportService } from '../../services/export.service';
 import { OrderForm } from '../../components/order/order-form';
 import { Order, OrderStatus } from '../../models/order.model';
 
@@ -44,7 +45,7 @@ export class Orders implements OnInit {
   // Expose OrderStatus to template
   OrderStatus = OrderStatus;
 
-  statuses: string[] = [];
+  statuses = signal<string[]>([]);
 
   // Use getters to avoid initialization order issues
   get filteredOrders() {
@@ -88,6 +89,7 @@ export class Orders implements OnInit {
   constructor(
     private orderService: OrderService,
     private notificationService: NotificationService,
+    private exportService: ExportService,
     private dialog: MatDialog
   ) {
     // Auto-update filtered/paged orders when list changes
@@ -100,7 +102,9 @@ export class Orders implements OnInit {
 
   ngOnInit() {
     this.orderService.loadOrders();
-    this.loadStatuses();
+    
+    // Inicializar estados desde el enum (evita problemas de change detection)
+    this.statuses.set(Object.values(OrderStatus));
 
     // Listen to search changes
     this.searchControl.valueChanges.subscribe(() => {
@@ -129,14 +133,6 @@ export class Orders implements OnInit {
     this.maxAmountControl.valueChanges.subscribe(() => {
       this.currentPage.set(1);
       this.updateFilteredOrders();
-    });
-  }
-
-  loadStatuses() {
-    this.orderService.getAvailableStatuses().subscribe({
-      next: (statuses) => {
-        this.statuses = statuses;
-      }
     });
   }
 
@@ -234,6 +230,26 @@ export class Orders implements OnInit {
 
   getTotalPages(): number {
     return Math.ceil(this.totalItems() / this.pageSize());
+  }
+
+  exportToCSV() {
+    const filteredOrders = this.orderService.filteredOrders();
+    if (filteredOrders.length === 0) {
+      this.notificationService.warning('No hay órdenes para exportar');
+      return;
+    }
+    this.exportService.exportToCSV(filteredOrders, 'ordenes');
+    this.notificationService.success('📊 Órdenes exportadas a CSV correctamente');
+  }
+
+  exportToPDF() {
+    const filteredOrders = this.orderService.filteredOrders();
+    if (filteredOrders.length === 0) {
+      this.notificationService.warning('No hay órdenes para exportar');
+      return;
+    }
+    this.exportService.exportToPDF(filteredOrders, 'ordenes');
+    this.notificationService.success('📄 Órdenes exportadas a PDF correctamente');
   }
 
   getStatusNameFromString(status: string): string {

@@ -3,6 +3,21 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+
+  h1 {
+    margin: 0;
+    flex: 1;
+  }
+
+  .header-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    button {
+      margin-left: 5px;
+    }
+  }
 }
 
 // Contenedor de búsqueda y filtros

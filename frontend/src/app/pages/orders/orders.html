@@ -1,8 +1,16 @@
 <div class="header-container">
   <h1>Gestión de Órdenes</h1>
-  <button mat-raised-button color="primary" (click)="openOrderForm()">
-    <mat-icon>add</mat-icon> Nueva Orden
-  </button>
+  <div class="header-buttons">
+    <button mat-raised-button color="primary" (click)="openOrderForm()">
+      <mat-icon>add</mat-icon> Nueva Orden
+    </button>
+    <button mat-stroked-button (click)="exportToCSV()" matTooltip="Exportar órdenes a CSV">
+      <mat-icon>file_download</mat-icon> CSV
+    </button>
+    <button mat-stroked-button (click)="exportToPDF()" matTooltip="Exportar órdenes a PDF">
+      <mat-icon>picture_as_pdf</mat-icon> PDF
+    </button>
+  </div>
 </div>
 
 <!-- Buscador y Filtros -->
@@ -29,7 +37,7 @@
     <mat-label>Estado</mat-label>
     <mat-select [formControl]="statusControl">
       <mat-option [value]="''">Todos los Estados</mat-option>
-      <mat-option *ngFor="let status of statuses" [value]="status">
+      <mat-option *ngFor="let status of statuses()" [value]="status">
         {{ getStatusNameFromString(status) }}
       </mat-option>
     </mat-select>
