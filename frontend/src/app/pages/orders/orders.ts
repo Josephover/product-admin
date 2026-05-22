@@ -13,7 +13,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { OrderService } from '../../services/order';
 import { NotificationService } from '../../services/notification.service';
 import { ExportService } from '../../services/export.service';
+import { OrderChangeService } from '../../services/order-change.service';
 import { OrderForm } from '../../components/order/order-form';
+import { OrderHistoryComponent } from '../../components/order-history/order-history';
 import { Order, OrderStatus } from '../../models/order.model';
 
 @Component({
@@ -90,6 +92,7 @@ export class Orders implements OnInit {
     private orderService: OrderService,
     private notificationService: NotificationService,
     private exportService: ExportService,
+    private orderChangeService: OrderChangeService,
     private dialog: MatDialog
   ) {
     // Auto-update filtered/paged orders when list changes
@@ -209,6 +212,13 @@ export class Orders implements OnInit {
     if (confirm(`¿Estás seguro de que deseas eliminar la orden ${order.orderNumber}?`)) {
       this.orderService.deleteOrder(order.id!);
     }
+  }
+
+  viewHistory(order: Order) {
+    this.dialog.open(OrderHistoryComponent, {
+      width: '600px',
+      data: { orderId: order.id, orderNumber: order.orderNumber }
+    });
   }
 
   getStatusColor(status: OrderStatus): string {

@@ -1,0 +1,146 @@
+.history-container {
+  padding: 24px;
+  max-height: 600px;
+  overflow-y: auto;
+
+  h2 {
+    margin: 0 0 24px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.loading,
+.error,
+.no-changes {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+
+  p {
+    margin: 0;
+  }
+}
+
+.error {
+  color: #d32f2f;
+  background-color: #ffebee;
+  border-radius: 4px;
+}
+
+.no-changes {
+  color: #999;
+  font-style: italic;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 40px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #667eea, #667eea 50%, transparent);
+  }
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .timeline-marker {
+    position: absolute;
+    left: -40px;
+    top: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+    &.change-success {
+      background: #4caf50;
+    }
+
+    &.change-info {
+      background: #2196f3;
+    }
+
+    &.change-warning {
+      background: #ff9800;
+    }
+
+    &.change-danger {
+      background: #f44336;
+    }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .timeline-content {
+    background: #f9f9f9;
+    border-left: 3px solid #667eea;
+    padding: 12px 16px;
+    border-radius: 4px;
+
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+
+      .change-type {
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+      }
+
+      .change-date {
+        font-size: 12px;
+        color: #999;
+      }
+    }
+
+    .change-description {
+      color: #555;
+      font-size: 14px;
+      margin-bottom: 6px;
+      word-break: break-word;
+    }
+
+    .change-by {
+      font-size: 12px;
+      color: #aaa;
+      font-style: italic;
+    }
+  }
+
+  .timeline-line {
+    position: absolute;
+    left: -25px;
+    top: 32px;
+    width: 2px;
+    height: 24px;
+    background: #ddd;
+  }
+}

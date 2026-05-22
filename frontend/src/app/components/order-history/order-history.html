@@ -1,0 +1,40 @@
+<div class="history-container">
+  <h2>Historial de Cambios - {{ data.orderNumber }}</h2>
+
+  <div *ngIf="loading" class="loading">
+    <p>Cargando historial...</p>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <p>{{ error }}</p>
+  </div>
+
+  <div *ngIf="!loading && !error && changes.length === 0" class="no-changes">
+    <p>No hay cambios registrados para esta orden.</p>
+  </div>
+
+  <div *ngIf="!loading && !error && changes.length > 0" class="timeline">
+    <div *ngFor="let change of changes; let last = last" class="timeline-item">
+      <div class="timeline-marker" [class]="getColorClass(ChangeTypeColors[change.changeType])">
+        <mat-icon>{{ ChangeTypeIcons[change.changeType] }}</mat-icon>
+      </div>
+
+      <div class="timeline-content">
+        <div class="timeline-header">
+          <span class="change-type">{{ ChangeTypeDisplayNames[change.changeType] }}</span>
+          <span class="change-date">{{ formatDate(change.createdAt) }}</span>
+        </div>
+
+        <div class="change-description">
+          {{ change.changeDescription }}
+        </div>
+
+        <div class="change-by">
+          Por: {{ change.changedBy }}
+        </div>
+      </div>
+
+      <div *ngIf="!last" class="timeline-line"></div>
+    </div>
+  </div>
+</div>

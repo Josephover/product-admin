@@ -16,6 +16,9 @@ public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
     
+    @Autowired
+    private OrderChangeService orderChangeService;
+    
     public List<Order> getAllOrders() {
         return orderRepository.findAllByOrderByCreatedAtDesc();
     }
@@ -48,7 +51,12 @@ public class OrderService {
         order.setCreatedAt(System.currentTimeMillis());
         order.setUpdatedAt(System.currentTimeMillis());
         order.setStatus(OrderStatus.PENDING); // Estado inicial
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+        
+        // Log del cambio
+        orderChangeService.logOrderCreated(savedOrder);
+        
+        return savedOrder;
     }
     
     public Order updateOrder(Long id, Order orderDetails) {
@@ -61,19 +69,40 @@ public class OrderService {
             order.setStatus(orderDetails.getStatus());
             order.setNotes(orderDetails.getNotes());
             order.setUpdatedAt(System.currentTimeMillis());
-            return orderRepository.save(order);
+            Order updatedOrder = orderRepository.save(order);
+            
+            // Log del cambio
+            orderChangeService.logOrderUpdated(updatedOrder, "Orden actualizada");
+            
+            return updatedOrder;
         }).orElseThrow(() -> new RuntimeException("Orden no encontrada"));
     }
     
     public void deleteOrder(Long id) {
-        orderRepository.deleteById(id);
+        Optional<Order> order = orderRepository.findById(id);
+        if (order.isPresent()) {
+            Order orderToDelete = order.get();
+            orderRepository.deleteById(id);
+            
+            // Log de eliminación
+            orderChangeService.logOrderDeleted(id, orderToDelete.getOrderNumber());
+            
+            // Limpiar historial de cambios
+            orderChangeService.deleteOrderChanges(id);
+        }
     }
     
     public Order updateOrderStatus(Long id, OrderStatus status) {
         return orderRepository.findById(id).map(order -> {
+            OrderStatus oldStatus = order.getStatus();
             order.setStatus(status);
             order.setUpdatedAt(System.currentTimeMillis());
-            return orderRepository.save(order);
+            Order updatedOrder = orderRepository.save(order);
+            
+            // Log del cambio de estado
+            orderChangeService.logStatusChanged(updatedOrder, oldStatus.toString(), status.toString());
+            
+            return updatedOrder;
         }).orElseThrow(() -> new RuntimeException("Orden no encontrada"));
     }
     
